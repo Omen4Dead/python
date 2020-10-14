@@ -1,0 +1,7 @@
+Ivan 35000
+Petr 15000
+Sally 25000
+Nick 40000
+Victor 19000
+Anna 28000
+Simon 16000
