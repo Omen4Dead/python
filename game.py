@@ -4,6 +4,7 @@ import random
 
 class NewGame:
     def __init__(self):
+        self.flag = 0
         self.player_card = self.new_card()
         self.computer_card = self.new_card()
         self.barrels = [i for i in range(1, 91)]
@@ -33,13 +34,13 @@ class NewGame:
                 card[i][pos] = '  '
         return card
 
-    @staticmethod
-    def replace(lst, number):
+    def replace(self, lst, number):
         for row in lst:
             for i, val in enumerate(row):
                 if val == number:
+                    self.flag = 1
                     row[i] = '--'
-        return lst
+        return lst, self.flag
 
     def next_step(self):
         new_barrel = random.choice(self.barrels)
@@ -47,9 +48,9 @@ class NewGame:
         for i, el in enumerate(self.barrels):
             if el == new_barrel:
                 self.barrels.pop(i)
-        self.replace(self.player_card, new_barrel)
+        _, flag = self.replace(self.player_card, new_barrel)
         self.replace(self.computer_card, new_barrel)
-        return new_barrel
+        return new_barrel, flag
 
     def draw(self):
         print('------ Ваша карточка -----')
@@ -68,18 +69,27 @@ class NewGame:
     def game(self):
         print('Новая игра!')
         self.draw()
+
         while True:
-            step = input('Вытащить новый боченок? (Y/N)\n')
-            if step.upper() == 'N':
-                print('Конец игры!')
+            if len(self.barrels) == 0:
+                print('Конец игры! Бочонки закончились!')
                 break
-            elif step.upper() == 'Y':
-                if len(self.barrels) == 0:
-                    print('Конец игры! Бочонки закончились!')
+            self.flag = 0
+            new, flag = self.next_step()
+            print(f'Новый боченок: {new}. Осталось: {len(self.barrels)}')
+            step = input('Зачеркнуть цифру? (Y/N)\n')
+            if step.upper() == 'N':
+                if flag == 1:
+                    print('Конец игры!')
                     break
-                new = self.next_step()
-                print(f'Новый боченок: {new}. Осталось: {len(self.barrels)}')
-                self.draw()
+                elif flag == 0:
+                    self.draw()
+            elif step.upper() == 'Y':
+                if flag == 1:
+                    self.draw()
+                elif flag == 0:
+                    print('Конец игры!')
+                    break
 
 
 n = NewGame()
